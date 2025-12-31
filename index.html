@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MIDI Looper</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <h1>MIDI Looper</h1>
+        </header>
+
+        <!-- Preset Selector -->
+        <div class="preset-selector">
+            <button class="preset-btn active" data-preset="piano">Piano</button>
+            <button class="preset-btn" data-preset="synth">Synth</button>
+            <button class="preset-btn" data-preset="drums">Drums</button>
+        </div>
+
+        <!-- Sound Controls -->
+        <div class="sound-controls" id="sound-controls">
+            <div class="control-row">
+                <div class="knob-group">
+                    <label>Filter</label>
+                    <input type="range" id="filter-knob" min="100" max="8000" value="8000" class="knob">
+                    <span class="knob-value" id="filter-value">8k</span>
+                </div>
+                <div class="knob-group">
+                    <label>Reverb</label>
+                    <input type="range" id="reverb-knob" min="0" max="100" value="20" class="knob">
+                    <span class="knob-value" id="reverb-value">20%</span>
+                </div>
+                <div class="knob-group">
+                    <label>Attack</label>
+                    <input type="range" id="attack-knob" min="1" max="500" value="20" class="knob">
+                    <span class="knob-value" id="attack-value">20ms</span>
+                </div>
+                <div class="knob-group">
+                    <label>Release</label>
+                    <input type="range" id="release-knob" min="50" max="2000" value="1000" class="knob">
+                    <span class="knob-value" id="release-value">1s</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Area -->
+        <div class="status-area">
+            <div class="recording-indicator" id="recording-indicator">
+                <span class="rec-dot"></span>
+                <span>REC</span>
+            </div>
+            <div class="loop-counter" id="loop-counter">
+                <span class="bar">1</span>
+                <span class="bar">2</span>
+                <span class="bar">3</span>
+                <span class="bar">4</span>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-track">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+
+        <!-- Piano Keyboard -->
+        <div class="keyboard-container">
+            <div class="octave-label">C4-B4</div>
+            <div class="octave" data-octave="4">
+                <div class="key white" data-note="C4"><span>C</span></div>
+                <div class="key black" data-note="C#4"></div>
+                <div class="key white" data-note="D4"><span>D</span></div>
+                <div class="key black" data-note="D#4"></div>
+                <div class="key white" data-note="E4"><span>E</span></div>
+                <div class="key white" data-note="F4"><span>F</span></div>
+                <div class="key black" data-note="F#4"></div>
+                <div class="key white" data-note="G4"><span>G</span></div>
+                <div class="key black" data-note="G#4"></div>
+                <div class="key white" data-note="A4"><span>A</span></div>
+                <div class="key black" data-note="A#4"></div>
+                <div class="key white" data-note="B4"><span>B</span></div>
+            </div>
+
+            <div class="octave-label">C3-B3</div>
+            <div class="octave" data-octave="3">
+                <div class="key white" data-note="C3"><span>C</span></div>
+                <div class="key black" data-note="C#3"></div>
+                <div class="key white" data-note="D3"><span>D</span></div>
+                <div class="key black" data-note="D#3"></div>
+                <div class="key white" data-note="E3"><span>E</span></div>
+                <div class="key white" data-note="F3"><span>F</span></div>
+                <div class="key black" data-note="F#3"></div>
+                <div class="key white" data-note="G3"><span>G</span></div>
+                <div class="key black" data-note="G#3"></div>
+                <div class="key white" data-note="A3"><span>A</span></div>
+                <div class="key black" data-note="A#3"></div>
+                <div class="key white" data-note="B3"><span>B</span></div>
+            </div>
+
+            <!-- Drum Labels (shown when drums preset active) -->
+            <div class="drum-overlay" id="drum-overlay">
+                <div class="drum-row">
+                    <span>Kick</span><span>Snare</span><span>HH</span><span>OH</span>
+                    <span>Tom</span><span>Tom</span><span>Tom</span>
+                </div>
+                <div class="drum-row">
+                    <span>Kick</span><span>Snare</span><span>HH</span><span>OH</span>
+                    <span>Crash</span><span>Ride</span><span>Clap</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transport Controls -->
+        <div class="transport">
+            <button class="transport-btn clear" id="clear-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/>
+                </svg>
+                <span>Clear</span>
+            </button>
+
+            <button class="transport-btn record" id="record-btn">
+                <div class="rec-circle"></div>
+            </button>
+
+            <button class="transport-btn play" id="play-btn">
+                <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+                <svg class="stop-icon" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+                    <rect x="6" y="6" width="12" height="12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/tone@14.7.77/build/Tone.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
