@@ -28,16 +28,35 @@ const presetBtns = document.querySelectorAll('.preset-btn');
 let pianoSynth, leadSynth, drumSynths;
 
 // Effects
-let mainFilter, reverb;
+let mainFilter, reverb, chorus, delay, distortion;
 
 // Initialize Tone.js instruments
 function initInstruments() {
-    // Create effects chain
+    // Create effects chain (order: distortion -> chorus -> delay -> reverb -> filter -> output)
     mainFilter = new Tone.Filter(8000, 'lowpass').toDestination();
+
     reverb = new Tone.Reverb({
         decay: 2,
         wet: 0.2
     }).connect(mainFilter);
+
+    delay = new Tone.PingPongDelay({
+        delayTime: '8n',
+        feedback: 0.3,
+        wet: 0
+    }).connect(reverb);
+
+    chorus = new Tone.Chorus({
+        frequency: 2,
+        delayTime: 3.5,
+        depth: 0.7,
+        wet: 0
+    }).connect(delay);
+
+    distortion = new Tone.Distortion({
+        distortion: 0,
+        wet: 0
+    }).connect(chorus);
 
     // Piano - warm polyphonic synth
     pianoSynth = new Tone.PolySynth(Tone.Synth, {
@@ -49,7 +68,7 @@ function initInstruments() {
             release: 1
         },
         volume: -6
-    }).connect(reverb);
+    }).connect(distortion);
 
     // Synth - bright sawtooth
     leadSynth = new Tone.PolySynth(Tone.Synth, {
@@ -61,7 +80,10 @@ function initInstruments() {
             release: 0.8
         },
         volume: -8
-    }).connect(reverb);
+    }).connect(distortion);
+
+    // Start chorus LFO
+    chorus.start();
 
     // Create drum synths once
     initDrumSynths();
@@ -521,15 +543,40 @@ clearBtn.addEventListener('click', clearLoop);
 
 // Setup knob controls
 function setupKnobs() {
+    // Get elements
+    const waveSelect = document.getElementById('wave-select');
     const filterKnob = document.getElementById('filter-knob');
     const reverbKnob = document.getElementById('reverb-knob');
+    const chorusKnob = document.getElementById('chorus-knob');
+    const delayKnob = document.getElementById('delay-knob');
+    const distortionKnob = document.getElementById('distortion-knob');
     const attackKnob = document.getElementById('attack-knob');
     const releaseKnob = document.getElementById('release-knob');
 
     const filterValue = document.getElementById('filter-value');
     const reverbValue = document.getElementById('reverb-value');
+    const chorusValue = document.getElementById('chorus-value');
+    const delayValue = document.getElementById('delay-value');
+    const distortionValue = document.getElementById('distortion-value');
     const attackValue = document.getElementById('attack-value');
     const releaseValue = document.getElementById('release-value');
+
+    const controlScroll = document.querySelector('.control-scroll');
+    const soundControls = document.getElementById('sound-controls');
+
+    // Hide scroll hint after scrolling
+    controlScroll.addEventListener('scroll', () => {
+        if (controlScroll.scrollLeft > 20) {
+            soundControls.classList.add('scrolled');
+        }
+    });
+
+    // Wave type control
+    waveSelect.addEventListener('change', (e) => {
+        const waveType = e.target.value;
+        pianoSynth.set({ oscillator: { type: waveType } });
+        leadSynth.set({ oscillator: { type: waveType } });
+    });
 
     // Filter control
     filterKnob.addEventListener('input', (e) => {
@@ -543,6 +590,28 @@ function setupKnobs() {
         const wet = parseInt(e.target.value) / 100;
         reverb.wet.rampTo(wet, 0.1);
         reverbValue.textContent = e.target.value + '%';
+    });
+
+    // Chorus control
+    chorusKnob.addEventListener('input', (e) => {
+        const wet = parseInt(e.target.value) / 100;
+        chorus.wet.rampTo(wet, 0.1);
+        chorusValue.textContent = e.target.value + '%';
+    });
+
+    // Delay control
+    delayKnob.addEventListener('input', (e) => {
+        const wet = parseInt(e.target.value) / 100;
+        delay.wet.rampTo(wet, 0.1);
+        delayValue.textContent = e.target.value + '%';
+    });
+
+    // Distortion control
+    distortionKnob.addEventListener('input', (e) => {
+        const amount = parseInt(e.target.value) / 100;
+        distortion.distortion = amount;
+        distortion.wet.value = amount > 0 ? 1 : 0;
+        distortionValue.textContent = e.target.value + '%';
     });
 
     // Attack control

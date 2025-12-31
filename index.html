@@ -20,29 +20,64 @@
             <button class="preset-btn" data-preset="drums">Drums</button>
         </div>
 
-        <!-- Sound Controls -->
+        <!-- Sound Controls (scrollable) -->
         <div class="sound-controls" id="sound-controls">
-            <div class="control-row">
+            <div class="control-scroll">
+                <!-- Wave Type -->
+                <div class="knob-group">
+                    <label>Wave</label>
+                    <select id="wave-select" class="mini-select">
+                        <option value="triangle">Tri</option>
+                        <option value="sine">Sine</option>
+                        <option value="square">Sqr</option>
+                        <option value="sawtooth">Saw</option>
+                        <option value="fatsawtooth">Fat</option>
+                    </select>
+                </div>
+                <!-- Filter -->
                 <div class="knob-group">
                     <label>Filter</label>
                     <input type="range" id="filter-knob" min="100" max="8000" value="8000" class="knob">
                     <span class="knob-value" id="filter-value">8k</span>
                 </div>
+                <!-- Reverb -->
                 <div class="knob-group">
                     <label>Reverb</label>
                     <input type="range" id="reverb-knob" min="0" max="100" value="20" class="knob">
                     <span class="knob-value" id="reverb-value">20%</span>
                 </div>
+                <!-- Chorus -->
+                <div class="knob-group">
+                    <label>Chorus</label>
+                    <input type="range" id="chorus-knob" min="0" max="100" value="0" class="knob">
+                    <span class="knob-value" id="chorus-value">0%</span>
+                </div>
+                <!-- Delay -->
+                <div class="knob-group">
+                    <label>Delay</label>
+                    <input type="range" id="delay-knob" min="0" max="100" value="0" class="knob">
+                    <span class="knob-value" id="delay-value">0%</span>
+                </div>
+                <!-- Distortion -->
+                <div class="knob-group">
+                    <label>Dist</label>
+                    <input type="range" id="distortion-knob" min="0" max="100" value="0" class="knob">
+                    <span class="knob-value" id="distortion-value">0%</span>
+                </div>
+                <!-- Attack -->
                 <div class="knob-group">
                     <label>Attack</label>
                     <input type="range" id="attack-knob" min="1" max="500" value="20" class="knob">
                     <span class="knob-value" id="attack-value">20ms</span>
                 </div>
+                <!-- Release -->
                 <div class="knob-group">
                     <label>Release</label>
                     <input type="range" id="release-knob" min="50" max="2000" value="1000" class="knob">
                     <span class="knob-value" id="release-value">1s</span>
                 </div>
+                <!-- Scroll hint -->
+                <div class="scroll-hint">→</div>
             </div>
         </div>
 
